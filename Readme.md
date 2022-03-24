@@ -4,23 +4,16 @@
 
 This is a simple daily planner where:
 
-- What was your motivation?
-- Why did you build this project? (Note: the answer is not "Because it was a homework assignment.")
-- What problem does it solve?
-- What did you learn?
+- The current day is displayed at the top on opening the application 
+- On scrolling down there are 1 hour blocks during normal business hours for scheduled events
+- Time blocks are color coded to indicate past(gray), present(red), and future(green)
+- Clicking on a time block, you can enter an event
+- Events will be saved to localStorage so that events persist on refresh
 
-## Table of Contents (Optional)
-
-If your README is long, add a table of contents to make it easy for users to find what they need.
-
-- [Installation](#installation)
-- [Usage](#usage)
-- [Credits](#credits)
-- [License](#license)
 
 ## Installation
 
-What are the steps required to install your project? Provide a step-by-step description of how to get the development environment running.
+Being a web application, there is no installation per se.  A local file is created in the browser that can be deleted through the Developer Tools or by clearing all browser data.
 
 ## Usage
 
