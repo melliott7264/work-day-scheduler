@@ -10,18 +10,14 @@ var eventsArray = [];
 $("#currentDay").text(moment().format("dddd MMMM Do YYYY"));
 
 
-// Start listEvents function 
+/* ******** Start listEvents function ********* */
+// list out all the schedulable blocks in the current day 
+var listEvents = function (eventDesc, eventId) {
 
-var listEvents = function () {
-
-// Define the event description variable 
-var eventDescription = "";
+    console.log("This is the passed eventId and eventDesc " + eventId + " " + eventDesc);
 
 // Define the current year, month, and day as a string for the event ID
 var dateIdDay = moment().format("YYYYMMDD");
-
-// Devine the variable for the hour class; past, present, future
-var hourClass = "past";
 
 // if the <ul> .list-group exists into which all the <li> (hour event blocks) are placed , remove it before rebuilding the list of hour event blocks
 if ( $(".list-group") ) {
@@ -34,56 +30,70 @@ $(".container").append(listGroupEl);
 
 
 // loop to populate days worth of hour event blocks
-// if localStorage events exists then read all the events from that list and populate the day's blocks
-// var eventsExists = loadEvents();  // true if the local events file exists and is loaded
-
 for ( i=startTime; i<=endTime; i++) {
     //get the current time and compare to the time slot being built to assign class: past, present, future 
     var currentHour = parseInt(moment().format("HH"));
-
-    // check if an event exists in eventsArray for this day and time.  if so, set eventDescription = eventArray.eventDesc  
-    // if (eventsExists) {
-        // loop through the entire array looking for a matching day and time
-        // for ( i = 0; i < events.length; i++){
-            // check dateIdDay against the first 8 chars of the event.dataTime string
-        // }   
-    // }
-  
+    var eventDescription = "";
+    
     if ( i < currentHour ) {
-        hourClass = "past";
+       var  hourClass = "past";
     } else if ( i > currentHour) {
-        hourClass = "future";
+        var hourClass = "future";
     } else {
-        hourClass = "present";
+        var hourClass = "present";
     }
 
     // Build two digit hour string for event ID 
-    var hourString = ""
-    // if i < 12 add a "0" in front of it
+    // if i < 10 add a "0" in front of it
     if (i < 10 ) {
-        hourString = "0" + i;
+        var hourString = "0" + i.toString();
     } else {
-        hourString = i;
+        var hourString = i.toString();
     }
+    
+    var dateIdHour = dateIdDay + hourString;
+    console.log("This is the calculated eventID " + dateIdHour);
 
-    var amString = "AM";
     // determine if AM/PM and set string accordingly
     if (i < 12 ) {
-        amString = "AM";
+        var amString = "AM";
     } else {
-        amString = "PM";
+        var amString = "PM";
     }
 
-    var dateIdHour = dateIdDay + hourString;
-    
-    // if an event exists for this day and hour, use that event.  Otherwise create an empty event block
-    
+    // create a 12 hour display hour string
+    if (i > 12) {
+        var displayHour = i - 12;
+        var displayHourString = displayHour.toString();
+    } else {
+        var displayHourString = i.toString();
+    }
+
+    // check if an event exists in eventsArray for this day and time.  if so, set eventDescription = eventArray.eventDesc  
+    if (loadEvents()) { 
+    // loop through the entire array looking for a matching eventId
+    for ( j = 0; j < eventsArray.length; j++){
+          if (eventsArray[j].eventId === dateIdHour) {
+              console.log("This is the stored eventId " + eventsArray[j].eventId);
+              eventDescription = eventsArray[j].eventDesc;
+              console.log("This is the event description " + eventDescription);
+          }
+        }   
+    }
+
+    // if an eventId and eventDesc have been passed to this function used those values.  Otherwise create an empty event block
+    if (eventId && eventDesc) {
+        if (eventId === dateIdHour){
+        eventDescription = eventDesc;
+        } 
+    }
+
     // creating a <li> for each event hour
     var listItemEl = $("<li>").addClass("event-list-item list-unstyled row").attr("id", dateIdHour );
     listGroupEl.append(listItemEl);
     
     // creating <span>, <p>, and <button> elements for each event hour and appending to the <li>
-    var listItemSpanEl = $("<span>").addClass("col-2 d-flex align-items-center justify-content-center time-block hour " + hourClass).text(hourString + ":00 " + amString);
+    var listItemSpanEl = $("<span>").addClass("col-2 d-flex align-items-center justify-content-center time-block hour " + hourClass).text(displayHourString + ":00 " + amString);
     var listItemPEl = $("<p>").addClass("col-9 d-flex align-items-center mb-0 description " + hourClass).text(eventDescription);
     var listItemBtnEl = $("<button>").addClass("saveBtn col-1 " + hourClass).text("Save");
     listItemEl.append(listItemSpanEl, listItemPEl, listItemBtnEl);
@@ -91,40 +101,67 @@ for ( i=startTime; i<=endTime; i++) {
 
 return;
 
-}; // End listEvent function
+}; 
 
-// loadEvents function to load events from localStorage
+/* ************ End listEvent function ************ */
+
+/* *********** Start loadEvents function to load events from localStorage ********** */
 var loadEvents = function() {
 
     if (localStorage.getItem("events")) {
-        events = JSON.parse(localStorage.getItem("events"));
+        eventsArray = JSON.parse(localStorage.getItem("events"));
         return true;
     } else {
         return false;
     }
 };
 
-// saveEvents function to save events array to localStorage events file
-var saveEvents = function() {
+/* **************  End loadEvent function ************** */
+
+/* ************ Start saveEvents function to save events array to localStorage events file ************ */
+var saveEvents = function(eventDesc, eventId) {
+    if (!eventDesc || !eventId) {
+        return false;
+    } else {
+        eventsArray.push({
+            eventDesc: eventDesc,
+            eventId: eventId
+    });
+    }
 
     localStorage.setItem("events", JSON.stringify(eventsArray));
 
-    return;
+    return true;
 }
 
-// editEvent function to edit event description
-var editEvent = function () {
+// need to identify the element that was clicked on and replace it with an input form  
+$(".container").on("click", "p", function(){
+    var eventDesc =$(this).text().trim();
+    var eventDescInput = $("<textarea>").addClass("form-control").val(eventDesc);
+    $(this).replaceWith(eventDescInput);
+    // make the text to be edited in focus
+    eventDescInput.trigger("focus");
+  });
+  
+  $(".container").on("change", "textarea", function() {
+    //get the edit box's current value/text
+    var eventDesc = $(this).val().trim();
+    var eventId = $(this).closest(".event-list-item").attr("id");
 
-// need to identify the event that was clicked on and open an form field for that event's description
+    // pass the updated event description along with the eventId back to listEvents to displa
+    listEvents(eventDesc, eventId);
+  });
+  
+$(".container").on("click", "button", function () {
+    var eventId=$(this).closest(".event-list-item").attr("id");
+    var eventDesc = $(this).siblings("p").text().trim();
+    saveEvents(eventDesc, eventId);
+    });
 
 
-    return;
-}
+// run listEvents function to load up the current day's page
 
 listEvents();
 
 
-// Need to be able to add and edit blocks adding events
-// Events must be saved to localStorage(events - an array of objects)
-//
 
