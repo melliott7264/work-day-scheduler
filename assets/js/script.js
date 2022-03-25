@@ -8,7 +8,8 @@ var eventsArray = [];
 
 // Add current day to top of page 
 $("#currentDay").text(moment().format("dddd MMMM Do YYYY"));
-
+// var currentDay = $("#datepicker").text().trim();
+// console.log(currentDay);
 
 /* ******** Start listEvents function ********* */
 // list out all the schedulable blocks in the current day 
@@ -34,7 +35,7 @@ for ( i=startTime; i<=endTime; i++) {
     //get the current time and compare to the time slot being built to assign class: past, present, future 
     var currentHour = parseInt(moment().format("HH"));
     var eventDescription = "";
-    
+
     if ( i < currentHour ) {
        var  hourClass = "past";
     } else if ( i > currentHour) {
@@ -69,24 +70,29 @@ for ( i=startTime; i<=endTime; i++) {
         var displayHourString = i.toString();
     }
 
-    // check if an event exists in eventsArray for this day and time.  if so, set eventDescription = eventArray.eventDesc  
-    if (loadEvents()) { 
-    // loop through the entire array looking for a matching eventId
-    for ( j = 0; j < eventsArray.length; j++){
-          if (eventsArray[j].eventId === dateIdHour) {
-              console.log("This is the stored eventId " + eventsArray[j].eventId);
-              eventDescription = eventsArray[j].eventDesc;
-              console.log("This is the event description " + eventDescription);
-          }
-        }   
+  // if an eventId and eventDesc have been passed to this function used those values.  Otherwise check for saved events.  If none, create an empty event block
+  if (eventId && eventDesc) {
+    if (eventId === dateIdHour){
+    eventDescription = eventDesc;
+    } else {
+        console.log("passed eventId and dataIdHour do not match ");
     }
-
-    // if an eventId and eventDesc have been passed to this function used those values.  Otherwise create an empty event block
-    if (eventId && eventDesc) {
-        if (eventId === dateIdHour){
-        eventDescription = eventDesc;
-        } 
-    }
+} else {
+       // check if saved events are present in localStorage.  if so, check for a matching eventId and set eventDescription = eventArray.eventDesc  
+        if (loadEvents()) { 
+        // loop through the entire array looking for a matching eventId
+            for ( j = 0; j < eventsArray.length; j++){
+                if (eventsArray[j].eventId === dateIdHour) {
+                    eventDescription = eventsArray[j].eventDesc;
+                    console.log(dateIdHour + " " + eventsArray[j].eventId + " " + eventsArray[j].eventDesc);
+                } else {
+                    console.log("there is not an event for this date/time in the database");
+                }
+                }   
+        } else {
+            console.log("events file failed to load");
+        }
+}
 
     // creating a <li> for each event hour
     var listItemEl = $("<li>").addClass("event-list-item list-unstyled row").attr("id", dateIdHour );
@@ -110,6 +116,7 @@ var loadEvents = function() {
 
     if (localStorage.getItem("events")) {
         eventsArray = JSON.parse(localStorage.getItem("events"));
+        console.log(eventsArray);
         return true;
     } else {
         return false;
@@ -158,6 +165,9 @@ $(".container").on("click", "button", function () {
     saveEvents(eventDesc, eventId);
     });
 
+$(function () {
+    $("#datepicker").datepicker();
+});
 
 // run listEvents function to load up the current day's page
 
