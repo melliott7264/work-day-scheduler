@@ -26,7 +26,7 @@ if (currentDate) {
 }
 
 // if the <ul> .list-group exists into which all the <li> (hour event blocks) are placed , remove it before rebuilding the list of hour event blocks
-if ( $(".list-group") ) {
+if ($(".list-group")) {
     $(".list-group").remove();
 }
 
@@ -182,10 +182,13 @@ var hourStatus = function (dateIdHourM) {
 // need to identify the element that was clicked on and replace it with an input form  
 $(".container").on("click", "p", function(){
     var eventDesc =$(this).text().trim();
+    // var eventId = $(this).closest(".event-list-item").attr("id");
     var eventDescInput = $("<textarea>").addClass("form-control").val(eventDesc);
     $(this).replaceWith(eventDescInput);
     // make the text to be edited in focus
     eventDescInput.trigger("focus");
+    listEvents(eventDesc, eventId);
+    // listEvents();
   });
   
   $(".container").on("blur", "textarea", function() {
@@ -196,6 +199,7 @@ $(".container").on("click", "p", function(){
     // pass the updated event description along with the eventId back to listEvents to display
     saveEvents(eventDesc, eventId);
     listEvents(eventDesc, eventId);
+    // listEvents();
   });
   
 $(".container").on("click", "button", function () {
