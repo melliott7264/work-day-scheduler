@@ -5,20 +5,25 @@ var endTime = 17;  // end of work day 24 hour format
 
 // Define events array for localStorage  consists of event objects with properties dateTime and eventDesc  
 var eventsArray = [];
+// Need to define currentDate for use across functions and event handlers
+var currentDate = "";
 
 // Add current day to top of page 
-$("#currentDay").text(moment().format("dddd MMMM Do YYYY"));
-// var currentDay = $("#datepicker").text().trim();
-// console.log(currentDay);
+// $("#currentDay").text(moment().format("dddd MMMM Do YYYY"));
 
 /* ******** Start listEvents function ********* */
 // list out all the schedulable blocks in the current day 
 var listEvents = function (eventDesc, eventId) {
 
-    console.log("This is the passed eventId and eventDesc " + eventId + " " + eventDesc);
+//eventDesc and eventId are passed by the event handlers when editing events and by the saveEvent function.  Otherwise, they are ignored.
 
-// Define the current year, month, and day as a string for the event ID
+// Get the date sting for the current date to use on initial load 
 var dateIdDay = moment().format("YYYYMMDD");
+
+// If the currentDate set by the datepicker exists,  use that for listing the events.  The dateFormat function return a date string in the format "yyyymmdd"
+if (currentDate) {
+    dateIdDay = dateFormat(currentDate);
+}
 
 // if the <ul> .list-group exists into which all the <li> (hour event blocks) are placed , remove it before rebuilding the list of hour event blocks
 if ( $(".list-group") ) {
@@ -32,17 +37,8 @@ $(".container").append(listGroupEl);
 
 // loop to populate days worth of hour event blocks
 for ( i=startTime; i<=endTime; i++) {
-    //get the current time and compare to the time slot being built to assign class: past, present, future 
-    var currentHour = parseInt(moment().format("HH"));
+    // Must initialize eventDescription for each event block
     var eventDescription = "";
-
-    if ( i < currentHour ) {
-       var  hourClass = "past";
-    } else if ( i > currentHour) {
-        var hourClass = "future";
-    } else {
-        var hourClass = "present";
-    }
 
     // Build two digit hour string for event ID 
     // if i < 10 add a "0" in front of it
@@ -51,9 +47,13 @@ for ( i=startTime; i<=endTime; i++) {
     } else {
         var hourString = i.toString();
     }
-    
+    // dateIdHour used for eventId:  YYYYMMDDHH
     var dateIdHour = dateIdDay + hourString;
-    console.log("This is the calculated eventID " + dateIdHour);
+
+    // dateIdHourM used with moment.js to determine if past, present or future
+    var dateIdHourM = dateIdDay + "T" + hourString;
+
+    // console.log("This is the calculated eventID " + dateIdHour);
 
     // determine if AM/PM and set string accordingly
     if (i < 12 ) {
@@ -73,9 +73,9 @@ for ( i=startTime; i<=endTime; i++) {
   // if an eventId and eventDesc have been passed to this function used those values.  Otherwise check for saved events.  If none, create an empty event block
   if (eventId && eventDesc) {
     if (eventId === dateIdHour){
-    eventDescription = eventDesc;
+        eventDescription = eventDesc;
     } else {
-        console.log("passed eventId and dataIdHour do not match ");
+        // console.log("passed eventId and dataIdHour do not match ");
     }
 } else {
        // check if saved events are present in localStorage.  if so, check for a matching eventId and set eventDescription = eventArray.eventDesc  
@@ -84,13 +84,15 @@ for ( i=startTime; i<=endTime; i++) {
             for ( j = 0; j < eventsArray.length; j++){
                 if (eventsArray[j].eventId === dateIdHour) {
                     eventDescription = eventsArray[j].eventDesc;
-                    console.log(dateIdHour + " " + eventsArray[j].eventId + " " + eventsArray[j].eventDesc);
+                    // console.log(dateIdHour + " " + eventsArray[j].eventId + " " + eventsArray[j].eventDesc);
                 } else {
-                    console.log("there is not an event for this date/time in the database");
+                    // console.log("there is not an event for this date/time in the database");
+                   
                 }
-                }   
+            }   
         } else {
             console.log("events file failed to load");
+           
         }
 }
 
@@ -99,9 +101,9 @@ for ( i=startTime; i<=endTime; i++) {
     listGroupEl.append(listItemEl);
     
     // creating <span>, <p>, and <button> elements for each event hour and appending to the <li>
-    var listItemSpanEl = $("<span>").addClass("col-2 d-flex align-items-center justify-content-center time-block hour " + hourClass).text(displayHourString + ":00 " + amString);
-    var listItemPEl = $("<p>").addClass("col-9 d-flex align-items-center mb-0 description " + hourClass).text(eventDescription);
-    var listItemBtnEl = $("<button>").addClass("saveBtn col-1 " + hourClass).text("Save");
+    var listItemSpanEl = $("<span>").addClass("col-2 d-flex align-items-center justify-content-center time-block hour " + hourStatus(dateIdHourM)).text(displayHourString + ":00 " + amString);
+    var listItemPEl = $("<p>").addClass("col-9 d-flex align-items-center mb-0 description " + hourStatus(dateIdHourM)).text(eventDescription);
+    var listItemBtnEl = $("<button>").addClass("saveBtn col-1 " + hourStatus(dateIdHourM)).text("Save");
     listItemEl.append(listItemSpanEl, listItemPEl, listItemBtnEl);
 }
 
@@ -116,7 +118,7 @@ var loadEvents = function() {
 
     if (localStorage.getItem("events")) {
         eventsArray = JSON.parse(localStorage.getItem("events"));
-        console.log(eventsArray);
+        // console.log(eventsArray);
         return true;
     } else {
         return false;
@@ -141,6 +143,42 @@ var saveEvents = function(eventDesc, eventId) {
     return true;
 }
 
+// a function to take the string mm/dd/yyyy and turn it into the string yyyymmdd for the eventId
+var dateFormat = function (inputDateString) {
+    var monthArray = [];
+    var dayArray = [];
+    var yearArray = [];
+    var revArray = [];
+    var dateArray=inputDateString.split("");
+    console.log(dateArray);
+    for (i=0; i<dateArray.length; i++) {
+        if ( i < 2 ) {
+            monthArray.push(dateArray[i]);
+        } else if ( i >= 3 && i <= 4) {
+            dayArray.push(dateArray[i]);
+        } else if ( i > 5) {
+            yearArray.push(dateArray[i]);
+        }
+    }
+    revArray = yearArray.concat(monthArray,dayArray);
+    var reverseDateString = revArray.join("");
+    console.log(reverseDateString);
+    return reverseDateString;
+};
+
+var hourStatus = function (dateIdHourM) {
+       //get the current date and time and compare to the passed dateIdHour (yyyymmddhh) and assign a class: past, present, future
+   if (moment().isBefore(dateIdHourM, "hour")){
+    var  hourClass = "future";
+   } else if (moment().isAfter(dateIdHourM, "hour")) {
+        var hourClass = "past";
+   } else {
+       var hourClass = "present";
+   }
+
+       return hourClass;
+}
+
 // need to identify the element that was clicked on and replace it with an input form  
 $(".container").on("click", "p", function(){
     var eventDesc =$(this).text().trim();
@@ -150,12 +188,13 @@ $(".container").on("click", "p", function(){
     eventDescInput.trigger("focus");
   });
   
-  $(".container").on("change", "textarea", function() {
+  $(".container").on("blur", "textarea", function() {
     //get the edit box's current value/text
     var eventDesc = $(this).val().trim();
     var eventId = $(this).closest(".event-list-item").attr("id");
-
-    // pass the updated event description along with the eventId back to listEvents to displa
+    $(this).replaceWith=$("<p>").addClass("col-9 d-flex align-items-center mb-0 description " + hourStatus()).text(eventDesc);
+    // pass the updated event description along with the eventId back to listEvents to display
+    saveEvents(eventDesc, eventId);
     listEvents(eventDesc, eventId);
   });
   
@@ -165,11 +204,16 @@ $(".container").on("click", "button", function () {
     saveEvents(eventDesc, eventId);
     });
 
-$(function () {
-    $("#datepicker").datepicker();
+$("#datepicker").datepicker( {
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: "mm/dd/yy",
+        onSelect: function(date) {
+            currentDate = date;
+            listEvents();
+        },
 });
 
-// run listEvents function to load up the current day's page
 
 listEvents();
 
