@@ -116,6 +116,7 @@ var loadEvents = function() {
 /* ************ Start saveEvents function to save events array to localStorage events file ************ */
 var saveEvents = function(eventDesc, eventId) {
     if (!eventDesc || !eventId) {
+        console.log("a valid eventId or eventDesc was not passed to the saveEvents function")
         return false;
     } else {
         eventsArray.push({
@@ -204,42 +205,48 @@ var updateScreen = function () {
 
 /* ************ Event Handler for Editing the Event Description ************* */
 // need to identify the element that was clicked on and replace it with an input form  
-    $(".container").on("click", "p", function(){
-        var eventDesc1 =$(this).text().trim();
-        var eventDescInput = $("<textarea>").addClass("form-control").val(eventDesc1);
-        $(this).replaceWith(eventDescInput);
-        // make the text to be edited in focus
-        eventDescInput.trigger("focus");
-        // refresh the page
-        listEvents();
-    });
+$(".container").on("click", "p", function(){
+    console.log("clicked on event description");
+    // var eventDesc1 =$(this).text().trim();
+    eventDesc1 = "This is placeholder text";
+    console.log(this);
+    console.log(eventDesc1);
+    // var eventDescInput = $("<textarea>").addClass("form-control").val(eventDesc1);
+    var eventDescInput = $("<input/>").attr({type: "text", id: "event-description", name: "event-description"}).val(eventDesc1);
+    console.log(eventDescInput);
+    $(this).replaceWith(eventDescInput);
+    // make the text to be edited in focus
+    eventDescInput.trigger("focus");
+    // refresh the page
+    listEvents();
+});
 
-    // saves the editing changes when you click off the edited element 
-  $(".container").on("mouseleave", "textarea", function() {
+// saves the editing changes when you click off the edited element 
+$(".container").on("mouseleave", "textarea", function() {
     // get the edit box's current value/text
     var eventDesc2 = $(this).val().trim();
     // get the eventId
     var eventId2 = $(this).closest(".event-list-item").attr("id");
     // put the event block back the was it was with the new event text
-    $(this).replaceWith=$("<p>").addClass("col-9 d-flex align-items-center mb-0 description " + hourStatus()).text(eventDesc2);
+    $(this).replaceWith = $("<p>").addClass("col-9 d-flex align-items-center mb-0 description " + hourStatus()).text(eventDesc2);
     // pass the eventId and new event description to the saveEvents function and refresh the page with the listEvents function
     saveEvents(eventDesc2, eventId2);
     listEvents();
-  }); 
+    }); 
 /* *********** End Event Description Editing  ************* */
 
 /* ********** Start Event Handler for Event Clear Button *********** */   
 // on click on the Clear button get the eventId and pass it to the clearEvents function
-    $(".container").on("click", ".clearBtn", function () {
-        // get the eventId
-        var eventId4=$(this).closest(".event-list-item").attr("id");
-        // pass the eventId to be cleared to the clearEvents function
-        clearEvents(eventId4);
-        }); 
+$(".container").on("click", ".clearBtn", function () {
+    // get the eventId
+    var eventId4=$(this).closest(".event-list-item").attr("id");
+    // pass the eventId to be cleared to the clearEvents function
+    clearEvents(eventId4);
+    }); 
 
 /* ********** Start Event Handler for Event Save Button *********** */   
 // this is a redundant function to meet acceptance criteria.  Edits are saved when you click off the edited element 
-   $(".container").on("click", ".saveBtn", function () {
+$(".container").on("click", ".saveBtn", function () {
     var eventId3=$(this).closest(".event-list-item").attr("id");
     var eventDesc3 = $(this).siblings("p").text().trim();
     console.log("Save button was pressed");
@@ -248,16 +255,16 @@ var updateScreen = function () {
 
 /* ************* Start datepicker Event Handler ************** */
 // this calls the jquery UI datapicker to set the current date for the calendar
-    $("#datepicker").datepicker( {
-        changeMonth: true,
-        changeYear: true,
-        dateFormat: "mm/dd/yy",
-        defaultDate: new Date(),
-        onSelect: function(date) {
-            currentDate = date;
-            listEvents();
-        },
-    });
+$("#datepicker").datepicker( {
+    changeMonth: true,
+    changeYear: true,
+    dateFormat: "mm/dd/yy",
+    defaultDate: new Date(),
+    onSelect: function(date) {
+        currentDate = date;
+        listEvents();
+    },
+});
 /* *************  End datepicker Event Handler ************* */
 
 // Initial load of calendar for current day - runs the timer to update the screen every minute and loads the page for the current date
