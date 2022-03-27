@@ -1,6 +1,6 @@
 // This is an application to create a simple daily planner  
 // Define global variables
-var startTime = 8; // beginning of work day 24 hour format
+var startTime = 7; // beginning of work day 24 hour format
 var endTime = 17;  // end of work day 24 hour format
 
 // Define events array for localStorage  consists of event objects with properties dateTime and eventDesc  
@@ -108,9 +108,10 @@ for ( i=startTime; i<=endTime; i++) {
 
     // creating <span>, <p>, and <button> elements for each event hour and appending to the <li>
     var listItemSpanEl = $("<span>").addClass("col-2 d-flex align-items-center justify-content-center time-block hour " + hourStatus(dateIdHourM)).text(displayHourString + ":00 " + amString);
-    var listItemPEl = $("<p>").addClass("col-9 d-flex align-items-center mb-0 description " + hourStatus(dateIdHourM)).text(eventDescription);
+    var listItemPEl = $("<p>").addClass("col-8 d-flex align-items-center mb-0 description " + hourStatus(dateIdHourM)).text(eventDescription);
+    var listItemBtnClrEl = $("<button>").addClass("clearBtn col-1 " + hourStatus(dateIdHourM)).text("Clear");
     var listItemBtnEl = $("<button>").addClass("saveBtn col-1 " + hourStatus(dateIdHourM)).text("Save");
-    listItemEl.append(listItemSpanEl, listItemPEl, listItemBtnEl);
+    listItemEl.append(listItemSpanEl, listItemPEl, listItemBtnClrEl, listItemBtnEl);
 }
 return;
 }; 
@@ -145,6 +146,32 @@ var saveEvents = function(eventDesc, eventId) {
     return true;
 }
 /* ************* End saveEvents function ************ */
+
+/* ************ Start clearEvents function to save events array to localStorage events file ************ */
+var clearEvents = function(eventId) {
+    if (!eventId) {
+        alert("Error ! eventId not passed to clear event.");
+    } else {
+        if (confirm("Are you sure you want to delete this event?")){
+            // find eventId in eventsArray then remove it
+            for (i=0; i<eventsArray.length; i++) {
+                if (eventId === eventsArray[i].eventId) {
+                    eventsArray.splice(i,1);
+                }
+            }   
+        } else {
+            console.log("Event was not deleted by user action")
+            return false;
+        }
+        
+    }
+    
+    localStorage.setItem("events", JSON.stringify(eventsArray));
+    listEvents();    
+    return true;
+    
+}
+/* ************* End clearEvents function ************ */
 
 /* ************ Start dateFormat function ************* */
 // a function to take the string mm/dd/yyyy and turn it into the string yyyymmdd for the eventId
@@ -227,12 +254,24 @@ var updateScreen = function () {
 // }); 
 /* *********** End Event Description Editing  ************* */
 
+/* ********** Start Event Handler for Event Clear Button *********** */   
+
+    $(".container").on("click", ".clearBtn", function () {
+        var eventId4=$(this).closest(".event-list-item").attr("id");
+        // var eventDesc4 = $(this).siblings("p").text("");
+        console.log("Clear button was pressed")
+        clearEvents(eventId4);
+        }); 
+
+    
+
 /* ********** Start Event Handler for Event Save Button *********** */   
 // this is a redundant function to meet acceptance criteria.  Edits are saved when you click off the edited element 
 // $(function(){
-   $(".container").on("click", "button", function () {
+   $(".container").on("click", ".saveBtn", function () {
     var eventId3=$(this).closest(".event-list-item").attr("id");
     var eventDesc3 = $(this).siblings("p").text().trim();
+    console.log("Save button was pressed");
     saveEvents(eventDesc3, eventId3);
     }); 
 // });

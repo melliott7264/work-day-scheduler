@@ -17,7 +17,7 @@ Being a web application, there is no installation per se.  A local file is creat
 
 ## Usage
 
-Provide instructions and examples for use. Include screenshots as needed.
+On initial load, the calendar comes up showing the current day's schedule.  To select another day, click on the field marked "Click to Select Date:".  A calendar will pop up.  Just select the date desired and the schedule for that day will be loaded.  To add/edit an event, click anywhere in the event description block to the right of the hour block.  A text entry box will appear.  Just type in the event information you desire.  When you are finished, just move the mouse cursor out of the text entry box.  Your event will be automatically saved.   To be sure, you can click on the blue Save button to the far right.  Click on the Clear button to remove the event from the database.  On clear, you will be asked to confirm that you want to delete the event from the database.
 
 To add a screenshot, create an `assets/images` folder in your repository and upload your screenshot to it. Then, using the relative filepath, add it to your README using the following syntax:
 
