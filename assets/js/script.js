@@ -216,15 +216,12 @@ var updateScreen = function () {
 /* ************ Event Handler for Editing the Event Description ************* */
 // need to identify the element that was clicked on and replace it with an input form  
 $(".container").on("click", "p", function(){
-    // console.log("clicked on event description");
+    console.log("clicked on event description");
     var eventDesc1 =$(this).text().trim();
-    console.log(eventDesc1);
-    var eventDescInput = "<textarea class='form-control'>" + eventDesc1 + "</textarea>";
-    // var eventDescInput = $("<textarea>").className("form-control").val(eventDesc1);
+    var eventDescInput = "<textarea id='event-description' class='form-control'>" + eventDesc1 + "</textarea>";
     $(this).replaceWith(eventDescInput);
-    // make the text to be edited in focus
-    // $(this).trigger("focus");
-    eventDescInput.trigger("click");
+    eventDescInput.trigger("focus");
+    // $("textarea").trigger("focus");
     // refresh the page
     listEvents();
 });
