@@ -38,7 +38,7 @@ $(".container").append(listGroupEl);
 
 // ***************  Build a New Page ************************
 // loop to populate days worth of hour event blocks
-for ( i=startTime; i<=endTime; i++) {
+for (var i=startTime; i<=endTime; i++) {
 
     // Must initialize eventDescription for each event block
     var eventDescription = "";
@@ -74,7 +74,7 @@ for ( i=startTime; i<=endTime; i++) {
     // check if saved events are present in localStorage.  if so, check for a matching eventId and set eventDescription = eventArray.eventDesc  
     if (loadEvents()) { 
     // loop through the entire array looking for a matching eventId
-        for ( j = 0; j < eventsArray.length; j++){
+        for (var j = 0; j < eventsArray.length; j++){
             if (eventsArray[j].eventId === dateIdHour) {
                 eventDescription = eventsArray[j].eventDesc;
             } 
@@ -120,7 +120,7 @@ var saveEvents = function(eventDesc, eventId) {
         return false;
     } else {
         // Need to check for existing eventId and update the event description if found
-        for (i=0; i<eventsArray.length; i++) {
+        for (var i=0; i<eventsArray.length; i++) {
             if (eventId === eventsArray[i].eventId) {
                 eventsArray[i].eventDesc = eventDesc;
                 var eventFlag = true;
@@ -148,7 +148,7 @@ var clearEvents = function(eventId) {
     } else {
         if (confirm("Are you sure you want to delete this event?")){
             // find eventId in eventsArray then remove it
-            for (i=0; i<eventsArray.length; i++) {
+            for (var i=0; i<eventsArray.length; i++) {
                 if (eventId === eventsArray[i].eventId) {
                     eventsArray.splice(i,1);
                 }
@@ -173,7 +173,7 @@ var dateFormat = function (inputDateString) {
     var yearArray = [];
     var revArray = [];
     var dateArray=inputDateString.split("");
-    for (i=0; i<dateArray.length; i++) {
+    for (var i=0; i<dateArray.length; i++) {
         if ( i < 2 ) {
             monthArray.push(dateArray[i]);
         } else if ( i >= 3 && i <= 4) {
