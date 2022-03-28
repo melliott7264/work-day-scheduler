@@ -119,10 +119,20 @@ var saveEvents = function(eventDesc, eventId) {
         console.log("a valid eventId or eventDesc was not passed to the saveEvents function")
         return false;
     } else {
-        eventsArray.push({
-            eventDesc: eventDesc,
-            eventId: eventId
-    });
+        // Need to check for existing eventId and update the event description if found
+        for (i=0; i<eventsArray.length; i++) {
+            if (eventId === eventsArray[i].eventId) {
+                eventsArray[i].eventDesc = eventDesc;
+                var eventFlag = true;
+            }
+        }
+        // If the eventFlag was not set(true) then just add the event to the array
+        if (!eventFlag) {
+            eventsArray.push({
+                eventDesc: eventDesc,
+                eventId: eventId
+            });
+        }
     }
 
     localStorage.setItem("events", JSON.stringify(eventsArray));
@@ -206,17 +216,15 @@ var updateScreen = function () {
 /* ************ Event Handler for Editing the Event Description ************* */
 // need to identify the element that was clicked on and replace it with an input form  
 $(".container").on("click", "p", function(){
-    console.log("clicked on event description");
-    // var eventDesc1 =$(this).text().trim();
-    eventDesc1 = "This is placeholder text";
-    console.log(this);
+    // console.log("clicked on event description");
+    var eventDesc1 =$(this).text().trim();
     console.log(eventDesc1);
-    // var eventDescInput = $("<textarea>").addClass("form-control").val(eventDesc1);
-    var eventDescInput = $("<input/>").attr({type: "text", id: "event-description", name: "event-description"}).val(eventDesc1);
-    console.log(eventDescInput);
+    var eventDescInput = "<textarea class='form-control'>" + eventDesc1 + "</textarea>";
+    // var eventDescInput = $("<textarea>").className("form-control").val(eventDesc1);
     $(this).replaceWith(eventDescInput);
     // make the text to be edited in focus
-    eventDescInput.trigger("focus");
+    // $(this).trigger("focus");
+    eventDescInput.trigger("click");
     // refresh the page
     listEvents();
 });
