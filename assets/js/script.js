@@ -53,9 +53,6 @@ for (var i=startTime; i<=endTime; i++) {
     // dateIdHour used for eventId:  YYYYMMDDHH
     var dateIdHour = dateIdDay + hourString;
 
-    // dateIdHourM used with moment.js to determine if past, present or future
-    var dateIdHourM = dateIdDay + "T" + hourString;
-
     // determine if AM/PM and set string accordingly
     if (i < 12 ) {
         var amString = "AM";
@@ -90,10 +87,10 @@ for (var i=startTime; i<=endTime; i++) {
     listGroupEl.append(listItemEl);
 
     // creating <span>, <p>, and <button> elements for each event hour and appending to the <li>
-    var listItemSpanEl = $("<span>").addClass("col-2 d-flex align-items-center justify-content-center time-block hour " + hourStatus(dateIdHourM)).text(displayHourString + ":00 " + amString);
-    var listItemPEl = $("<p>").addClass("col-8 d-flex align-items-center mb-0 description " + hourStatus(dateIdHourM)).text(eventDescription);
-    var listItemBtnClrEl = $("<button>").addClass("clearBtn col-1 " + hourStatus(dateIdHourM)).text("Clear");
-    var listItemBtnEl = $("<button>").addClass("saveBtn col-1 " + hourStatus(dateIdHourM)).text("Save");
+    var listItemSpanEl = $("<span>").addClass("col-2 d-flex align-items-center justify-content-center time-block hour " + hourStatus(dateIdHour)).text(displayHourString + ":00 " + amString);
+    var listItemPEl = $("<p>").addClass("col-8 d-flex align-items-center mb-0 description " + hourStatus(dateIdHour)).text(eventDescription);
+    var listItemBtnClrEl = $("<button>").addClass("clearBtn col-1 " + hourStatus(dateIdHour)).text("Clear");
+    var listItemBtnEl = $("<button>").addClass("saveBtn col-1 " + hourStatus(dateIdHour)).text("Save");
     listItemEl.append(listItemSpanEl, listItemPEl, listItemBtnClrEl, listItemBtnEl);
 }  
 // ********************** End of the For Loop to Build a New Page ***************************
@@ -190,7 +187,14 @@ var dateFormat = function (inputDateString) {
 
 /* ******** Start hourStatus function ********** */
 // this function determines whether the current hour block is in the past, present, or future
-var hourStatus = function (dateIdHourM) {
+var hourStatus = function (dateIdHour) {
+    // dateIdHour is eventId in the form YYYYMMDDHH
+    // Need to get two strings from dateIdHour; dateIdDay (YYYYMMDD) and hourSring(HH)
+    var dateIdDay = dateIdHour.slice(0,8);
+    var hourString = dateIdHour.slice(8,10);
+
+    // dateIdHourM used with moment.js to determine if past, present or future
+    var dateIdHourM = dateIdDay + "T" + hourString;
        //get the current date and time and compare to the passed dateIdHour (yyyymmddhh) and assign a class: past, present, future
    if (moment().isBefore(dateIdHourM, "hour")){
     var  hourClass = "future";
@@ -214,26 +218,28 @@ var updateScreen = function () {
 /* ********** End updateScreen function ************ */
 
 /* ************ Event Handler for Editing the Event Description ************* */
-// need to identify the element that was clicked on and replace it with an input form  
+// need to identify the <p> element that was clicked on and replace it with an input form to edit the contents 
 $(".container").on("click", "p", function(){
     console.log("clicked on event description");
+    // grab the current content of the <p> element
     var eventDesc1 =$(this).text().trim();
+    // define the new text input element with which to temporarily replace the <p> element
     var eventDescInput = "<textarea id='event-description' class='form-control'>" + eventDesc1 + "</textarea>";
+    // replace the <p> element with the <textarea> element
     $(this).replaceWith(eventDescInput);
-    eventDescInput.trigger("focus");
-    // $("textarea").trigger("focus");
-    // refresh the page
-    listEvents();
+    // give focus to the text entry box putting the cursor at the end of the current text
+    $("textarea").trigger("focus");
 });
 
 // saves the editing changes when you click off the edited element 
 $(".container").on("mouseleave", "textarea", function() {
     // get the edit box's current value/text
     var eventDesc2 = $(this).val().trim();
-    // get the eventId
+    // get the eventId YYYYMMDDHH
     var eventId2 = $(this).closest(".event-list-item").attr("id");
-    // put the event block back the was it was with the new event text
-    $(this).replaceWith = $("<p>").addClass("col-9 d-flex align-items-center mb-0 description " + hourStatus()).text(eventDesc2);
+    // put the event block back the way it was with the new event text
+    var eventDescReg = $("<p>").addClass("col-8 d-flex align-items-center mb-0 description " + hourStatus(eventId2)).text(eventDesc2);
+    $(this).replaceWith(eventDescReg);
     // pass the eventId and new event description to the saveEvents function and refresh the page with the listEvents function
     saveEvents(eventDesc2, eventId2);
     listEvents();
