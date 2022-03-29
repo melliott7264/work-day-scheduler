@@ -220,7 +220,6 @@ var updateScreen = function () {
 /* ************ Event Handler for Editing the Event Description ************* */
 // need to identify the <p> element that was clicked on and replace it with an input form to edit the contents 
 $(".container").on("click", "p", function(){
-    console.log("clicked on event description");
     // grab the current content of the <p> element
     var eventDesc1 =$(this).text().trim();
     // define the new text input element with which to temporarily replace the <p> element
