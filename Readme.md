@@ -4,11 +4,11 @@
 
 This is a simple daily planner where:
 
-- The current day is displayed at the top on opening the application 
-- On scrolling down there are 1 hour blocks during normal business hours for scheduled events
+- The current day is displayed at the top on opening the application and you can select any day you desire using a calendar
+- On scrolling down there are 1 hour blocks during normal business hours for scheduled events or tasks
 - Time blocks are color coded to indicate past(gray), present(red), and future(green)
-- Clicking on a time block, you can enter an event
-- Events will be saved to localStorage so that events persist on refresh
+- Clicking on a time block, you can enter an event or task
+- Events or tasks will be saved to localStorage so that they persist on refresh
 
 
 ## Installation
@@ -17,23 +17,20 @@ Being a web application, there is no installation per se.  A local file is creat
 
 ## Usage
 
-On initial load, the calendar comes up showing the current day's schedule.  To select another day, click on the field marked "Click to Select Date:".  A calendar will pop up.  Just select the date desired and the schedule for that day will be loaded.  To add/edit an event, click anywhere in the event description block to the right of the hour block.  A text entry box will appear.  Just type in the event information you desire.  When you are finished, just move the mouse cursor out of the text entry box.  Your event will be automatically saved.   To be sure, you can click on the blue Save button to the far right.  Click on the Clear button to remove the event from the database.  On clear, you will be asked to confirm that you want to delete the event from the database.
+Run at this link:  https://melliott7264.github.io/work-day-scheduler/
 
-To add a screenshot, create an `assets/images` folder in your repository and upload your screenshot to it. Then, using the relative filepath, add it to your README using the following syntax:
+On initial load, the calendar comes up showing the current day's schedule.  To select another day, click on the field marked "Click to Select Date:".  A calendar will pop up.  Just select the date desired and the schedule for that day will be loaded.  To add/edit an event, click anywhere in the event description block to the right of the hour block.  A text entry box will appear.  Click in the text entry box and type in the event information you desire.  When you are finished, just move the mouse cursor out of the text entry box.  Your event will be automatically saved.   To be sure, you can click on the blue Save button to the far right.  Click on the Clear button to remove the event from the database.  On clear, you will be asked to confirm that you want to delete the event from the database.
 
-    ```md
-    ![alt text](assets/images/screenshot.png)
-    ```
+
+![Work Day Scheduler screenshot](./assets/images/ScreenShot.png)
+
 
 ## Credits
 
 Mark Elliott  https://github.com/melliott7264
 
-List your collaborators, if any, with links to their GitHub profiles.
+Code repository for this project: https://github.com/melliott7264/work-day-scheduler
 
-If you used any third-party assets that require attribution, list the creators with links to their primary web presence in this section.
-
-If you followed tutorials, include links to those here as well.
 
 ## License
 
@@ -58,23 +55,3 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ---
-
-🏆 The previous sections are the bare minimum, and your project will ultimately determine the content of this document. You might also want to consider adding the following sections.
-
-## Badges
-
-![badmath](https://img.shields.io/github/languages/top/lernantino/badmath)
-
-Badges aren't necessary, per se, but they demonstrate street cred. Badges let other developers know that you know what you're doing. Check out the badges hosted by [shields.io](https://shields.io/). You may not understand what they all represent now, but you will in time.
-
-## Features
-
-If your project has a lot of features, list them here.
-
-## How to Contribute
-
-If you created an application or package and would like other developers to contribute it, you can include guidelines for how to do so. The [Contributor Covenant](https://www.contributor-covenant.org/) is an industry standard, but you can always write your own if you'd prefer.
-
-## Tests
-
-Go the extra mile and write tests for your application. Then provide examples on how to run them here.
